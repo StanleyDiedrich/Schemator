@@ -13,6 +13,7 @@ namespace Schemator
         public string Category;
         public string Section;
         public string RoomNummer;
+        public string ClassRoomName;
         public string RoomName;
         public string Floor;
         public string   TermQuantity;
@@ -27,16 +28,17 @@ namespace Schemator
         public string System9;
         public string System10;
         
-        public Room(string roomid, string roomxlId, string category,string section,string roomNummer, string roomname, string floor, string system1,
+        public Room( string roomxlId, string category,string section,string roomNummer, string classroomname,string roomname, string floor, string system1,
             string system2, string system3, string system4, string system5, string system6, string system7, string system8,
             string system9, string system10)
         {
-            this.RoomId = roomid;
+          
             this.RoomXlId = roomxlId;
             this.Category = category;
             this.Section = section;
             this.RoomNummer = roomNummer;
             this.RoomName = roomname;
+            this.ClassRoomName = classroomname;
             this.Floor = floor;
             this.System1 = system1;
             this.System2 = system2;
