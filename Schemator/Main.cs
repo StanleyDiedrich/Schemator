@@ -8,6 +8,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
+using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.UI;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -39,8 +40,37 @@ namespace Schemator
             FamilySymbol familyType = doc.GetElement(elementSet.First()) as FamilySymbol;
 
 
-            List<XYZ> list = new List<XYZ>();
-            foreach (var rooms in groupedrooms)
+            foreach (var group in groupedrooms)
+            {
+                var floors = group.GroupBy(x => x.Floor).Select(x => x.ToList());
+
+                foreach (var floor in floors)
+                {
+                    foreach(var room in floor)
+                    {
+                        if (room != null)
+                        {
+                            string rfloor = room.Floor;
+                            int floorval;
+                            if (rfloor == "-" || rfloor == null || rfloor == "")
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                floorval = Convert.ToInt32(rfloor.Select(dx => dx).Where(dx => char.IsDigit(dx)).First().ToString());
+                            }
+
+                        }
+                    }
+                   
+                }
+            }
+           
+            return Result.Succeeded;
+
+
+            /*foreach (var rooms in groupedrooms)
             {
                 double X = 0;
                 double Y = 0;
@@ -61,7 +91,7 @@ namespace Schemator
 
                         else
                         {
-                            List<Room> floorroom = new List<Room>();
+                            List<string, List<Room> floorroom = new List<Room>();
                             try
                             {
 
@@ -81,7 +111,8 @@ namespace Schemator
                                 
 
                                
-                                /*using (Transaction t = new Transaction(doc, "CreateScheme"))
+                                */
+                                 /*  * *using (Transaction t = new Transaction(doc, "CreateScheme"))
                                 {
                                     t.Start();
                                     if (!familyType.IsActive)
@@ -100,33 +131,13 @@ namespace Schemator
                                     catch
                                     {
                                        t.RollBack();
-                                    }
+                                    }*/
                                    
 
 
 
-                                    
-                                }*/
-
-                            }
-                        
-                        }
-                    
-                    }
-                    X = x;
-                    Y -= 100;
-                }
                 
-            }
-
-            string text = string.Empty;
-            foreach (var i in list)
-            {
-                string a = $"{i.X};{i.Y};{i.Z}\n";
-                text += a;
-            }
-            TaskDialog.Show("Revitpizdec2", text);
-            return Result.Succeeded;
+          
         }
     }
 }
