@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Schemator
 {
-    public class SelectedCsv 
+    public class GroupedRooms
     {
-        public string csvfile { get; set; }
-        public List<List<Room>> rooms { get; set; }
+      
     }
 }

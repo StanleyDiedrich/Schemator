@@ -9,12 +9,14 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Autodesk.Revit.UI;
 
 namespace Schemator
 {
     public partial class Uontrol : Form
     {
         private readonly SelectedCsv _selectedCsv;
+        private readonly List<List<Room>> _rooms;
         public Uontrol(SelectedCsv selectedCsv)
         {
             InitializeComponent();
@@ -57,77 +59,26 @@ namespace Schemator
                 
               
             }
-             var groupedrooms = rooms.GroupBy(x=>x.System1).ToList();
-            var grouproompair =new Dictionary<IGrouping<string,Room>, List<Room>>();
-            foreach (var group  in groupedrooms)
-            {
-                List<Room> grouplist =new List<Room>();
-                foreach (var room in group)
-                {
-                    grouplist.Add(room);
-                }
-                grouproompair.Add(group, grouplist);
-            }
+            var groupedrooms = rooms.GroupBy(x=>x.System1).ToList();
+            var floorrooms = rooms.GroupBy(x=>x.Floor).ToList();
+            //var groupfloorpair =new Dictionary<IGrouping<string,Room>, List<Room>>();
 
+            var systemfloorgroups = rooms.GroupBy(r => new { r.System1,r.System2,r.System3,r.System4, r.Floor }).Select(g=>g.ToList()).ToList();
+            _selectedCsv.rooms = systemfloorgroups;
+            this.Close();
             
-           /* List<string> systems = new List<string>();
-            foreach (Room room in rooms)
+
+            /*text = string.Empty;
+            foreach ( var group in systemfloorgroups ) 
             {
-                var sys1 = room.System1;
-                var sys2 = room.System2;
-                var sys3 = room.System3;
-                var sys4 = room.System4;
-                var sys5 = room.System5;
-                var sys6 = room.System6;
-                var sys7 = room.System7;
-                var sys8 = room.System8;
-                var sys9 = room.System9;
-                var sys10 = room.System10;
-
-                if (sys1!="-")
+               foreach ( var item in group )
                 {
-                    systems.Add(sys1);
-                }
-
-                if (sys2!="-")
-                {
-                    systems.Add(sys2);
-                }
-                if (sys3!="-")
-                {
-                    systems.Add(sys3);
-                }
-                if (sys4!="-")
-                {
-                    systems.Add(sys4);
-                }
-                if (sys5!="-")
-                {
-                    systems.Add(sys5);
-                }
-                if (sys6!="-")
-                {
-                    systems.Add(sys6);
-                }
-                if (sys7!="-")
-                {
-                    systems.Add(sys7);
-                }
-                if (sys8!="-")
-                {
-                    systems.Add(sys8);
-                }
-                if (sys9!="-")
-                {
-                    systems.Add(sys9);
-                }
-                if (sys10!="-")
-                {
-                    systems.Add(sys10);
+                    string a = $"{item.RoomNummer};{item.Floor};{item.System1};{item.System2}";
+                    text += a+"\n";
                 }
             }
-            var filteredsystems =systems.Distinct().ToList();*/
-            MessageBox.Show(groupedrooms.ToString());
+
+            TaskDialog.Show("Revit", text);*/
         }
     }
 }

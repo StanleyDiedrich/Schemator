@@ -24,9 +24,18 @@ namespace Schemator
             var uiDocument = commandData.Application.ActiveUIDocument;
             var doc = uiDocument.Document;
             var csv = SelectedCsv.csvfile;
+            var groupedrooms = SelectedCsv.rooms;
             
-            
-            //TaskDialog.Show("ReadCsv",csv);
+            foreach ( var rooms in groupedrooms )
+            {
+                foreach ( var room in rooms )
+                {
+
+                }
+            }
+
+
+           // TaskDialog.Show("ReadCsv",groupedrooms.ToString());
 
             return Result.Succeeded;
         }
