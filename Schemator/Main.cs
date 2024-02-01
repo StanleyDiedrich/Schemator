@@ -71,6 +71,7 @@ namespace Schemator
                                 XYZ xYZ = new XYZ(XX + x, y, 0.0);
                                 XYZ coordinate = xYZ;
                                 x += 2500 / 304.8;
+
                                 using (Transaction t = new Transaction(doc, "CreateScheme"))
                                 {
                                     t.Start();
@@ -85,8 +86,78 @@ namespace Schemator
                                     {
                                        
                                         FamilyInstance fI = doc.Create.NewFamilyInstance(coordinate, familyType, uiDocument.ActiveView);
+                                        Parameter roomname = fI.LookupParameter("Наименование помещения");
+                                        Parameter roomnumber = fI.LookupParameter("Номер помещения");
+                                        Parameter roomcategory = fI.LookupParameter("Категория");
+                                        Parameter airterminal = fI.LookupParameter("Количество решеток");
                                         Parameter sys1 = fI.LookupParameter("Номер системы 01");
+                                        Parameter sys2 = fI.LookupParameter("Номер системы 02");
+                                        Parameter sys3 = fI.LookupParameter("Номер системы 03");
+                                        Parameter sys4 = fI.LookupParameter("Номер системы 04");
+                                        Parameter sys5 = fI.LookupParameter("Номер системы 05");
+                                        Parameter sys6 = fI.LookupParameter("Номер системы 06");
+                                        Parameter sys7 = fI.LookupParameter("Номер системы 07");
+                                        Parameter sys8 = fI.LookupParameter("Номер системы 08");
+                                        Parameter sys9 = fI.LookupParameter("Номер системы 09");
+                                        Parameter sys10 = fI.LookupParameter("Номер системы 10");
+
+
+                                        roomname.Set(item.RoomName);
+                                        roomnumber.Set(item.RoomNummer);
+                                        roomcategory.Set(item.Category);
                                         sys1.Set(item.System1);
+                                        sys2.Set(item.System2);
+                                        sys3.Set(item.System3);
+                                        sys4.Set(item.System4);
+                                        sys5.Set(item.System5);
+                                        sys6.Set(item.System6);
+                                        sys7.Set(item.System7);
+                                        sys8.Set(item.System8);
+                                        sys9.Set(item.System9);
+                                        sys10.Set(item.System10);
+
+
+                                        airterminal.Set(1);
+                                        int count = 0;
+
+                                        string s1 = sys1.AsString();
+                                        string s2 = sys2.AsString();
+                                        string s3 = sys3.AsString();
+                                        string s4 = sys4.AsString();
+                                        string s5 = sys5.AsString();
+                                        string s6 = sys6.AsString();
+                                        string s7 = sys7.AsString();
+                                        string s8 = sys8.AsString();
+                                        string s9 = sys9.AsString();
+                                        string s10 = sys10.AsString();
+                                        List<string> list = new List<string>()
+                                        {
+                                            s1,
+                                            s2,
+                                            s3,
+                                            s4,
+                                            s5,
+                                            s6,
+                                            s7,
+                                            s8,
+                                            s9,
+                                            s10
+
+                                        };
+                                        foreach (var sys in list)
+                                        {
+                                            if (sys=="-" || sys==string.Empty )
+                                            {
+                                                continue;
+                                            }
+                                            else
+                                            {
+                                                count++;
+                                            }
+                                        }
+                                        airterminal.Set(count);
+
+
                                        t.Commit();
 
                                     }
