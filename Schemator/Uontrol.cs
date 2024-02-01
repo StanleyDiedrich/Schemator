@@ -63,7 +63,7 @@ namespace Schemator
             var floorrooms = rooms.GroupBy(x=>x.Floor).ToList();
             //var groupfloorpair =new Dictionary<IGrouping<string,Room>, List<Room>>();
 
-            var systemfloorgroups = rooms.GroupBy(r => new { r.System1,r.System2,r.System3,r.System4, r.Floor }).Select(g=>g.ToList()).ToList();
+            var systemfloorgroups = rooms.GroupBy(r => new { r.System1 }).Select(g=>g.ToList()).ToList();
             _selectedCsv.rooms = systemfloorgroups;
             this.Close();
             

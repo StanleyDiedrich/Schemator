@@ -40,34 +40,79 @@ namespace Schemator
             FamilySymbol familyType = doc.GetElement(elementSet.First()) as FamilySymbol;
 
 
+
+
+            double XX = 0;
             foreach (var group in groupedrooms)
             {
-                var floors = group.GroupBy(x => x.Floor).Select(x => x.ToList());
 
-                foreach (var floor in floors)
+                double x = 0;
+
+                var fgroup = group.GroupBy(g => g.System1).ToList();
+                foreach (var room in fgroup)
                 {
-                    foreach(var room in floor)
+                    foreach (var item in room)
                     {
-                        if (room != null)
+                        if (item != null)
                         {
-                            string rfloor = room.Floor;
-                            int floorval;
-                            if (rfloor == "-" || rfloor == null || rfloor == "")
+                            if (item.System1 != "-" || item.System2 != "-")
                             {
-                                continue;
-                            }
-                            else
-                            {
-                                floorval = Convert.ToInt32(rfloor.Select(dx => dx).Where(dx => char.IsDigit(dx)).First().ToString());
+                                string rfloor = item.Floor;
+                                int floorval;
+                                if (rfloor == "-" || rfloor == null || rfloor == "")
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    floorval = Convert.ToInt32(rfloor.Select(dx => dx).Where(dx => char.IsDigit(dx)).First().ToString());
+                                }
+                                double y = floorval * 4000 / 304.8;
+                                XYZ xYZ = new XYZ(XX + x, y, 0.0);
+                                XYZ coordinate = xYZ;
+                                x += 2500 / 304.8;
+                                using (Transaction t = new Transaction(doc, "CreateScheme"))
+                                {
+                                    t.Start();
+
+                                    if (!familyType.IsActive)
+                                    {
+                                        familyType.Activate();
+                                    }
+
+
+                                    try
+                                    {
+                                       
+                                        FamilyInstance fI = doc.Create.NewFamilyInstance(coordinate, familyType, uiDocument.ActiveView);
+                                        Parameter sys1 = fI.LookupParameter("Номер системы 01");
+                                        sys1.Set(item.System1);
+                                       t.Commit();
+
+                                    }
+
+                                    catch
+                                    {
+                                        t.RollBack();
+                                    }
+                                }
                             }
 
                         }
                     }
-                   
+
+
+
+                    XX += 1000;
                 }
+                
             }
-           
             return Result.Succeeded;
+        }
+    }
+}
+           
+           
 
 
             /*foreach (var rooms in groupedrooms)
@@ -138,10 +183,7 @@ namespace Schemator
 
                 
           
-        }
-    }
-}
-
+    
 /*string roomname = room.RoomName;
 string roomnumber = room.RoomNummer;
 string category = room.Category;
