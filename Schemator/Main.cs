@@ -117,19 +117,19 @@ namespace Schemator
                                         sys10.Set(item.System10);
 
 
-                                        airterminal.Set(1);
+                                       
                                         int count = 0;
 
-                                        string s1 = sys1.AsString();
-                                        string s2 = sys2.AsString();
-                                        string s3 = sys3.AsString();
-                                        string s4 = sys4.AsString();
-                                        string s5 = sys5.AsString();
-                                        string s6 = sys6.AsString();
-                                        string s7 = sys7.AsString();
-                                        string s8 = sys8.AsString();
-                                        string s9 = sys9.AsString();
-                                        string s10 = sys10.AsString();
+                                        string s1 = item.System1;
+                                        string s2 = item.System2;
+                                        string s3 = item.System3;
+                                        string s4 = item.System4;
+                                        string s5 = item.System5;
+                                        string s6 = item.System6;
+                                        string s7 = item.System7;
+                                        string s8 = item.System8;
+                                        string s9 = item.System9;
+                                        string s10 = item.System10;
                                         List<string> list = new List<string>()
                                         {
                                             s1,
@@ -146,14 +146,11 @@ namespace Schemator
                                         };
                                         foreach (var sys in list)
                                         {
-                                            if (sys=="-" || sys==string.Empty )
-                                            {
-                                                continue;
-                                            }
-                                            else
+                                            if (sys!="-"  )
                                             {
                                                 count++;
                                             }
+                                           
                                         }
                                         airterminal.Set(count);
 
