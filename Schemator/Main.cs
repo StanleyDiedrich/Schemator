@@ -39,7 +39,7 @@ namespace Schemator
             ISet<ElementId> elementSet = family.GetFamilySymbolIds();
             FamilySymbol familyType = doc.GetElement(elementSet.First()) as FamilySymbol;
 
-
+            List<SubElements> systems = new List<SubElements>();
 
 
             double XX = 0;
@@ -67,7 +67,7 @@ namespace Schemator
                                 {
                                     floorval = Convert.ToInt32(rfloor.Select(dx => dx).Where(dx => char.IsDigit(dx)).First().ToString());
                                 }
-                                double y = floorval * 4000 / 304.8;
+                                double y = floorval * 4000 / 304.8+1000/304.8;
                                 XYZ xYZ = new XYZ(XX + x, y, 0.0);
                                 XYZ coordinate = xYZ;
                                 x += 2500 / 304.8;
@@ -305,7 +305,25 @@ namespace Schemator
                                         {
                                             at10.Set(localexterminal);
                                         }
-                                       
+
+                                        
+                                        var subElements = fI.GetSubComponentIds();
+                                        foreach ( var subElement in subElements )
+                                        {
+                                            if ( subElement != null )
+                                            {
+                                                var el= doc.GetElement(subElement);
+                                                LocationPoint locpoint = el.Location as LocationPoint;
+                                                XYZ loc = new XYZ(locpoint.Point.X, locpoint.Point.Y, locpoint.Point.Z);
+                                                SubElements subelement = new SubElements(el.Id, el.LookupParameter("Система 1").AsString(), el.LookupParameter("Система 2").AsString(),
+                                                    el.LookupParameter("Система 3").AsString(), el.LookupParameter("Система 4").AsString(),
+                                                    el.LookupParameter("Система 5").AsString(), el.LookupParameter("Система 6").AsString(),
+                                                    el.LookupParameter("Система 7").AsString(), el.LookupParameter("Система 8").AsString(),
+                                                    el.LookupParameter("Система 9").AsString(),
+                                                    el.LookupParameter("Система 10").AsString(), loc );
+                                                systems.Add(subelement);
+                                            }
+                                        }
 
                                         t.Commit();
 
@@ -317,6 +335,8 @@ namespace Schemator
                                         t.RollBack();
                                     }
                                 }
+
+                                
                             }
 
                         }
@@ -327,6 +347,42 @@ namespace Schemator
                     XX += 1000;
                 }
                 
+            }
+            var def 
+            var collector = new FilteredElementCollector(doc, doc.ActiveView.Id);
+            var familyInstances = collector.OfClass(typeof(FamilyInstance));
+            foreach (var anElem in familyInstances)
+            {
+                if (anElem is FamilyInstance)
+                {
+                    FamilyInstance aFamilyInst = anElem as FamilyInstance;
+                    // we need to skip nested family instances 
+                    // since we already get them as per below
+                    if (aFamilyInst.SuperComponent == null)
+                    {
+                        // this is a family that is a root family
+                        // ie might have nested families 
+                        // but is not a nested one
+                       
+                        if (subElements.Count == 0)
+                        {
+                            // no nested families
+                            System.Diagnostics.Debug.WriteLine(aFamilyInst.Name + " has no nested families");
+                        }
+                        else
+                        {
+                            // has nested families
+                            foreach (var aSubElemId in subElements)
+                            {
+                                var aSubElem = doc.GetElement(aSubElemId);
+                                if (aSubElem is FamilyInstance)
+                                {
+                                    System.Diagnostics.Debug.WriteLine(aSubElem.Name + " is a nested family of " + aFamilyInst.Name);
+                                }
+                            }
+                        }
+                    }
+                }
             }
             return Result.Succeeded;
         }
