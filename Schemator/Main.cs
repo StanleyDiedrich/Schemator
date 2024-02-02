@@ -153,9 +153,162 @@ namespace Schemator
                                            
                                         }
                                         airterminal.Set(count);
+                                        Parameter at1 = fI.LookupParameter("Решетка 01");
+                                        Parameter at2 = fI.LookupParameter("Решетка 02");
+                                        Parameter at3 = fI.LookupParameter("Решетка 03");
+                                        Parameter at4 = fI.LookupParameter("Решетка 04");
+                                        Parameter at5 = fI.LookupParameter("Решетка 05");
+                                        Parameter at6 = fI.LookupParameter("Решетка 06");
+                                        Parameter at7 = fI.LookupParameter("Решетка 07");
+                                        Parameter at8 = fI.LookupParameter("Решетка 08");
+                                        Parameter at9 = fI.LookupParameter("Решетка 09");
+                                        Parameter at10 = fI.LookupParameter("Решетка 10");
+                                        ElementId supplyterminal = new ElementId(257206);
+                                        ElementId exhaustterminal = new ElementId(257205);
+                                        ElementId localexterminal = new ElementId(257207);
+                                        if (s1.StartsWith("П"))
+                                        {
+                                            at1.Set(supplyterminal);
+                                        }
+                                        else if (s1.StartsWith("В"))
+                                        {
+                                            at1.Set(exhaustterminal);
+                                        }
+                                        else if (s1.StartsWith("М"))
+                                        {
+                                            at1.Set(localexterminal);
+                                        }
+                                        
+
+                                        if (s2.StartsWith("П"))
+                                        {
+                                            at2.Set(supplyterminal);
+                                        }
+                                        else if (s2.StartsWith("В"))
+                                        {
+                                            at2.Set(exhaustterminal);
+                                        }
+                                        else if (s2.StartsWith("М"))
+                                        {
+                                            at2.Set(localexterminal);
+                                        }
+                                        
+
+                                        if (s3.StartsWith("П"))
+                                        {
+                                            at3.Set(supplyterminal);
+                                        }
+                                        else if (s3.StartsWith("В"))
+                                        {
+                                            at3.Set(exhaustterminal);
+                                        }
+                                        else if (s3.StartsWith("М"))
+                                        {
+                                            at3.Set(localexterminal);
+                                        }
+                                       
+
+                                        if (s4.StartsWith("П"))
+                                        {
+                                            at4.Set(supplyterminal);
+                                        }
+                                        else if (s4.StartsWith("В"))
+                                        {
+                                            at4.Set(exhaustterminal);
+                                        }
+                                        else if (s4.StartsWith("М"))
+                                        {
+                                            at4.Set(localexterminal);
+                                        }
+                                       
+
+                                        if (s5.StartsWith("П"))
+                                        {
+                                            at5.Set(supplyterminal);
+                                        }
+                                        else if (s5.StartsWith("В"))
+                                        {
+                                            at5.Set(exhaustterminal);
+                                        }
+                                        else if (s5.StartsWith("М"))
+                                        {
+                                            at5.Set(localexterminal);
+                                        }
+                                        
 
 
-                                       t.Commit();
+                                        if (s6.StartsWith("П"))
+                                        {
+                                            at6.Set(supplyterminal);
+                                        }
+                                        else if (s6.StartsWith("В"))
+                                        {
+                                            at6.Set(exhaustterminal);
+                                        }
+                                        else if (s6.StartsWith("М"))
+                                        {
+                                            at6.Set(localexterminal);
+                                        }
+                                        
+
+                                        if (s7.StartsWith("П"))
+                                        {
+                                            at7.Set(supplyterminal);
+                                        }
+                                        else if (s7.StartsWith("В"))
+                                        {
+                                            at7.Set(exhaustterminal);
+                                        }
+                                        else if (s7.StartsWith("М"))
+                                        {
+                                            at7.Set(localexterminal);
+                                        }
+                                       
+
+                                        if (s8.StartsWith("П"))
+                                        {
+                                            at8.Set(supplyterminal);
+                                        }
+                                        else if (s8.StartsWith("В"))
+                                        {
+                                            at8.Set(exhaustterminal);
+                                        }
+                                        else if (s8.StartsWith("М"))
+                                        {
+                                            at8.Set(localexterminal);
+                                        }
+                                        
+
+                                        if (s9.StartsWith("П"))
+                                        {
+                                            at9.Set(supplyterminal);
+                                        }
+                                        else if (s9.StartsWith("В"))
+                                        {
+                                            at9.Set(exhaustterminal);
+                                        }
+                                        else if (s9.StartsWith("М"))
+                                        {
+                                            at9.Set(localexterminal);
+                                        }
+                                       
+
+                                        if (s10.StartsWith("П"))
+                                        {
+                                            at10.Set(supplyterminal);
+                                        }
+                                        else if (s10.StartsWith("В"))
+                                        {
+                                            at10.Set(exhaustterminal);
+                                        }
+                                        else if (s10.StartsWith("М"))
+                                        {
+                                            at10.Set(localexterminal);
+                                        }
+                                       
+
+                                        t.Commit();
+
 
                                     }
 
