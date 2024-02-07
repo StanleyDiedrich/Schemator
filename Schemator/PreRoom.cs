@@ -9,6 +9,7 @@ namespace Schemator
 {
     public class PreRoom
     {
+        public string RoomXlId { get; set; }
         public string Name { get; set; }
         public string Number { get; set; }
         public string Category { get; set; }
@@ -26,8 +27,9 @@ namespace Schemator
         public string System10 { get; set; }
         public XYZ Location { get; set; }
 
-        public PreRoom(string name, string number, string category, string section,   int floor, string sys1, string sys2, string sys3, string sys4, string sys5, string sys6, string sys7, string sys8, string sys9, string sys10)
+        public PreRoom(string roomId, string name, string number, string category, string section,   int floor, string sys1, string sys2, string sys3, string sys4, string sys5, string sys6, string sys7, string sys8, string sys9, string sys10)
         {
+            RoomXlId = roomId;
             Name = name;
             Number = number;
             Category = category;

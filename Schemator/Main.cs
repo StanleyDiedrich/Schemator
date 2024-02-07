@@ -2,6 +2,7 @@
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -52,6 +53,7 @@ namespace Schemator
                     { continue; }
                     else
                     {
+                        string id = element.RoomId;
                         string name = element.RoomName;
                         string number = element.RoomNummer;
                         string category = element.Category;
@@ -68,7 +70,7 @@ namespace Schemator
                         string sys9 = element.System9;
                         string sys10 = element.System10;
 
-                        PreRoom proom = new PreRoom(name, number, category,section, floor, sys1, sys2, sys3, sys4, sys5, sys6, sys7, sys8, sys9, sys10);
+                        PreRoom proom = new PreRoom(id , name, number, category,section, floor, sys1, sys2, sys3, sys4, sys5, sys6, sys7, sys8, sys9, sys10);
                         rooms.Add(proom);
                     }
                     
@@ -95,7 +97,7 @@ namespace Schemator
                     double Y = room.Floor * 4500/304.8 + 500 / 304 / 8;
                     room.Location = new XYZ(X, Y, Z);
                     elevation.Add(room);
-                    X += 2600 / 304.8;
+                    X += 2500 / 304.8;
                 }
                    
                 
@@ -120,6 +122,7 @@ namespace Schemator
                         {
 
                             FamilyInstance fI = doc.Create.NewFamilyInstance(room.Location, familyType, uiDocument.ActiveView);
+                            Parameter roomid = fI.LookupParameter("MARKS_Пространство_ID");
                             Parameter roomname = fI.LookupParameter("Наименование помещения");
                             Parameter roomnumber = fI.LookupParameter("Номер помещения");
                             Parameter roomcategory = fI.LookupParameter("Категория");
@@ -135,7 +138,7 @@ namespace Schemator
                             Parameter sys9 = fI.LookupParameter("Номер системы 09");
                             Parameter sys10 = fI.LookupParameter("Номер системы 10");
 
-
+                            roomid.Set(room.RoomXlId);
                             roomname.Set(room.Name);
                             roomnumber.Set(room.Number);
                             roomcategory.Set(room.Category);
