@@ -42,385 +42,333 @@ namespace Schemator
 
 
 
-            double XX = 0;
+            List<PreRoom> rooms = new List<PreRoom>();
             foreach (var group in groupedrooms)
             {
 
-                double x = 0;
-
-                var fgroup = group.GroupBy(g => g.System1).ToList();
-                foreach (var room in fgroup)
+                foreach (var element in group)
                 {
-                    foreach (var item in room)
+                    if (element.RoomName==null || element.RoomName=="-" ||element.RoomName=="0"|| element.Floor=="-" || element.Floor==null)
+                    { continue; }
+                    else
                     {
-                        if (item != null)
+                        string name = element.RoomName;
+                        string number = element.RoomNummer;
+                        string category = element.Category;
+                        string section = element.Section;
+                        int floor = Convert.ToInt32(element.Floor.Select(dx => dx).Where(dx => char.IsDigit(dx)).First().ToString());
+                        string sys1 = element.System1;
+                        string sys2 = element.System2;
+                        string sys3 = element.System3;
+                        string sys4 = element.System4;
+                        string sys5 = element.System5;
+                        string sys6 = element.System6;
+                        string sys7 = element.System7;
+                        string sys8 = element.System8;
+                        string sys9 = element.System9;
+                        string sys10 = element.System10;
+
+                        PreRoom proom = new PreRoom(name, number, category,section, floor, sys1, sys2, sys3, sys4, sys5, sys6, sys7, sys8, sys9, sys10);
+                        rooms.Add(proom);
+                    }
+                    
+                }
+            }
+            var orderedsystems = rooms.OrderBy(x=>x.Section).ThenBy(x => x.System1).ThenBy(x => x.System2).ThenBy(x => x.System3).ThenBy(x => x.System4);
+            
+            List<PreRoom> elevation = new List<PreRoom>();
+
+
+
+            double X = 0;
+            double Z = 0;
+            foreach (var room in orderedsystems)
+            {
+                
+                
+                
+               
+                if (room.System1 == "-" || room.System2 == "-")
+                { continue; }
+                else
+                {
+                    double Y = room.Floor * 4500/304.8 + 500 / 304 / 8;
+                    room.Location = new XYZ(X, Y, Z);
+                    elevation.Add(room);
+                    X += 2600 / 304.8;
+                }
+                   
+                
+               
+                
+            }
+
+            foreach (var room in elevation)
+            {
+                
+                    using (Transaction t = new Transaction(doc, "CreateScheme"))
+                    {
+                        t.Start();
+
+                        if (!familyType.IsActive)
                         {
-                            if (item.System1 != "-" || item.System2 != "-")
+                            familyType.Activate();
+                        }
+
+
+                        try
+                        {
+
+                            FamilyInstance fI = doc.Create.NewFamilyInstance(room.Location, familyType, uiDocument.ActiveView);
+                            Parameter roomname = fI.LookupParameter("Наименование помещения");
+                            Parameter roomnumber = fI.LookupParameter("Номер помещения");
+                            Parameter roomcategory = fI.LookupParameter("Категория");
+                            Parameter airterminal = fI.LookupParameter("Количество решеток");
+                            Parameter sys1 = fI.LookupParameter("Номер системы 01");
+                            Parameter sys2 = fI.LookupParameter("Номер системы 02");
+                            Parameter sys3 = fI.LookupParameter("Номер системы 03");
+                            Parameter sys4 = fI.LookupParameter("Номер системы 04");
+                            Parameter sys5 = fI.LookupParameter("Номер системы 05");
+                            Parameter sys6 = fI.LookupParameter("Номер системы 06");
+                            Parameter sys7 = fI.LookupParameter("Номер системы 07");
+                            Parameter sys8 = fI.LookupParameter("Номер системы 08");
+                            Parameter sys9 = fI.LookupParameter("Номер системы 09");
+                            Parameter sys10 = fI.LookupParameter("Номер системы 10");
+
+
+                            roomname.Set(room.Name);
+                            roomnumber.Set(room.Number);
+                            roomcategory.Set(room.Category);
+                            sys1.Set(room.System1);
+                            sys2.Set(room.System2);
+                            sys3.Set(room.System3);
+                            sys4.Set(room.System4);
+                            sys5.Set(room.System5);
+                            sys6.Set(room.System6);
+                            sys7.Set(room.System7);
+                            sys8.Set(room.System8);
+                            sys9.Set(room.System9);
+                            sys10.Set(room.System10);
+
+
+
+                            int count = 0;
+
+                            string s1 = room.System1;
+                            string s2 = room.System2;
+                            string s3 = room.System3;
+                            string s4 = room.System4;
+                            string s5 = room.System5;
+                            string s6 = room.System6;
+                            string s7 = room.System7;
+                            string s8 = room.System8;
+                            string s9 = room.System9;
+                            string s10 = room.System10;
+                            List<string> list = new List<string>()
                             {
-                                string rfloor = item.Floor;
-                                int floorval;
-                                if (rfloor == "-" || rfloor == null || rfloor == "")
+                                s1,
+                                s2,
+                                s3,
+                                s4,
+                                s5,
+                                s6,
+                                s7,
+                                s8,
+                                s9,
+                                s10
+
+                            };
+                            foreach (var sy in list)
+                            {
+                                if (sy != "-")
                                 {
-                                    continue;
+                                    count++;
                                 }
-                                else
-                                {
-                                    floorval = Convert.ToInt32(rfloor.Select(dx => dx).Where(dx => char.IsDigit(dx)).First().ToString());
-                                }
-                                double y = floorval * 4000 / 304.8;
-                                XYZ xYZ = new XYZ(XX + x, y, 0.0);
-                                XYZ coordinate = xYZ;
-                                x += 2500 / 304.8;
 
-                                using (Transaction t = new Transaction(doc, "CreateScheme"))
-                                {
-                                    t.Start();
-
-                                    if (!familyType.IsActive)
-                                    {
-                                        familyType.Activate();
-                                    }
-
-
-                                    try
-                                    {
-                                       
-                                        FamilyInstance fI = doc.Create.NewFamilyInstance(coordinate, familyType, uiDocument.ActiveView);
-                                        Parameter roomname = fI.LookupParameter("Наименование помещения");
-                                        Parameter roomnumber = fI.LookupParameter("Номер помещения");
-                                        Parameter roomcategory = fI.LookupParameter("Категория");
-                                        Parameter airterminal = fI.LookupParameter("Количество решеток");
-                                        Parameter sys1 = fI.LookupParameter("Номер системы 01");
-                                        Parameter sys2 = fI.LookupParameter("Номер системы 02");
-                                        Parameter sys3 = fI.LookupParameter("Номер системы 03");
-                                        Parameter sys4 = fI.LookupParameter("Номер системы 04");
-                                        Parameter sys5 = fI.LookupParameter("Номер системы 05");
-                                        Parameter sys6 = fI.LookupParameter("Номер системы 06");
-                                        Parameter sys7 = fI.LookupParameter("Номер системы 07");
-                                        Parameter sys8 = fI.LookupParameter("Номер системы 08");
-                                        Parameter sys9 = fI.LookupParameter("Номер системы 09");
-                                        Parameter sys10 = fI.LookupParameter("Номер системы 10");
-
-
-                                        roomname.Set(item.RoomName);
-                                        roomnumber.Set(item.RoomNummer);
-                                        roomcategory.Set(item.Category);
-                                        sys1.Set(item.System1);
-                                        sys2.Set(item.System2);
-                                        sys3.Set(item.System3);
-                                        sys4.Set(item.System4);
-                                        sys5.Set(item.System5);
-                                        sys6.Set(item.System6);
-                                        sys7.Set(item.System7);
-                                        sys8.Set(item.System8);
-                                        sys9.Set(item.System9);
-                                        sys10.Set(item.System10);
-
-
-                                       
-                                        int count = 0;
-
-                                        string s1 = item.System1;
-                                        string s2 = item.System2;
-                                        string s3 = item.System3;
-                                        string s4 = item.System4;
-                                        string s5 = item.System5;
-                                        string s6 = item.System6;
-                                        string s7 = item.System7;
-                                        string s8 = item.System8;
-                                        string s9 = item.System9;
-                                        string s10 = item.System10;
-                                        List<string> list = new List<string>()
-                                        {
-                                            s1,
-                                            s2,
-                                            s3,
-                                            s4,
-                                            s5,
-                                            s6,
-                                            s7,
-                                            s8,
-                                            s9,
-                                            s10
-
-                                        };
-                                        foreach (var sys in list)
-                                        {
-                                            if (sys!="-"  )
-                                            {
-                                                count++;
-                                            }
-                                           
-                                        }
-                                        airterminal.Set(count);
-                                        Parameter at1 = fI.LookupParameter("Решетка 01");
-                                        Parameter at2 = fI.LookupParameter("Решетка 02");
-                                        Parameter at3 = fI.LookupParameter("Решетка 03");
-                                        Parameter at4 = fI.LookupParameter("Решетка 04");
-                                        Parameter at5 = fI.LookupParameter("Решетка 05");
-                                        Parameter at6 = fI.LookupParameter("Решетка 06");
-                                        Parameter at7 = fI.LookupParameter("Решетка 07");
-                                        Parameter at8 = fI.LookupParameter("Решетка 08");
-                                        Parameter at9 = fI.LookupParameter("Решетка 09");
-                                        Parameter at10 = fI.LookupParameter("Решетка 10");
-                                        ElementId supplyterminal = new ElementId(257206);
-                                        ElementId exhaustterminal = new ElementId(257205);
-                                        ElementId localexterminal = new ElementId(257207);
-                                        if (s1.StartsWith("П"))
-                                        {
-                                            at1.Set(supplyterminal);
-                                        }
-                                        else if (s1.StartsWith("В"))
-                                        {
-                                            at1.Set(exhaustterminal);
-                                        }
-                                        else if (s1.StartsWith("М"))
-                                        {
-                                            at1.Set(localexterminal);
-                                        }
-                                        
-
-                                        if (s2.StartsWith("П"))
-                                        {
-                                            at2.Set(supplyterminal);
-                                        }
-                                        else if (s2.StartsWith("В"))
-                                        {
-                                            at2.Set(exhaustterminal);
-                                        }
-                                        else if (s2.StartsWith("М"))
-                                        {
-                                            at2.Set(localexterminal);
-                                        }
-                                        
-
-                                        if (s3.StartsWith("П"))
-                                        {
-                                            at3.Set(supplyterminal);
-                                        }
-                                        else if (s3.StartsWith("В"))
-                                        {
-                                            at3.Set(exhaustterminal);
-                                        }
-                                        else if (s3.StartsWith("М"))
-                                        {
-                                            at3.Set(localexterminal);
-                                        }
-                                       
-
-                                        if (s4.StartsWith("П"))
-                                        {
-                                            at4.Set(supplyterminal);
-                                        }
-                                        else if (s4.StartsWith("В"))
-                                        {
-                                            at4.Set(exhaustterminal);
-                                        }
-                                        else if (s4.StartsWith("М"))
-                                        {
-                                            at4.Set(localexterminal);
-                                        }
-                                       
-
-                                        if (s5.StartsWith("П"))
-                                        {
-                                            at5.Set(supplyterminal);
-                                        }
-                                        else if (s5.StartsWith("В"))
-                                        {
-                                            at5.Set(exhaustterminal);
-                                        }
-                                        else if (s5.StartsWith("М"))
-                                        {
-                                            at5.Set(localexterminal);
-                                        }
-                                        
-
-
-                                        if (s6.StartsWith("П"))
-                                        {
-                                            at6.Set(supplyterminal);
-                                        }
-                                        else if (s6.StartsWith("В"))
-                                        {
-                                            at6.Set(exhaustterminal);
-                                        }
-                                        else if (s6.StartsWith("М"))
-                                        {
-                                            at6.Set(localexterminal);
-                                        }
-                                        
-
-                                        if (s7.StartsWith("П"))
-                                        {
-                                            at7.Set(supplyterminal);
-                                        }
-                                        else if (s7.StartsWith("В"))
-                                        {
-                                            at7.Set(exhaustterminal);
-                                        }
-                                        else if (s7.StartsWith("М"))
-                                        {
-                                            at7.Set(localexterminal);
-                                        }
-                                       
-
-                                        if (s8.StartsWith("П"))
-                                        {
-                                            at8.Set(supplyterminal);
-                                        }
-                                        else if (s8.StartsWith("В"))
-                                        {
-                                            at8.Set(exhaustterminal);
-                                        }
-                                        else if (s8.StartsWith("М"))
-                                        {
-                                            at8.Set(localexterminal);
-                                        }
-                                        
-
-                                        if (s9.StartsWith("П"))
-                                        {
-                                            at9.Set(supplyterminal);
-                                        }
-                                        else if (s9.StartsWith("В"))
-                                        {
-                                            at9.Set(exhaustterminal);
-                                        }
-                                        else if (s9.StartsWith("М"))
-                                        {
-                                            at9.Set(localexterminal);
-                                        }
-                                       
-
-                                        if (s10.StartsWith("П"))
-                                        {
-                                            at10.Set(supplyterminal);
-                                        }
-                                        else if (s10.StartsWith("В"))
-                                        {
-                                            at10.Set(exhaustterminal);
-                                        }
-                                        else if (s10.StartsWith("М"))
-                                        {
-                                            at10.Set(localexterminal);
-                                        }
-                                       
-
-                                        t.Commit();
-
-
-                                    }
-
-                                    catch
-                                    {
-                                        t.RollBack();
-                                    }
-                                }
+                            }
+                            airterminal.Set(count);
+                            Parameter at1 = fI.LookupParameter("Решетка 01");
+                            Parameter at2 = fI.LookupParameter("Решетка 02");
+                            Parameter at3 = fI.LookupParameter("Решетка 03");
+                            Parameter at4 = fI.LookupParameter("Решетка 04");
+                            Parameter at5 = fI.LookupParameter("Решетка 05");
+                            Parameter at6 = fI.LookupParameter("Решетка 06");
+                            Parameter at7 = fI.LookupParameter("Решетка 07");
+                            Parameter at8 = fI.LookupParameter("Решетка 08");
+                            Parameter at9 = fI.LookupParameter("Решетка 09");
+                            Parameter at10 = fI.LookupParameter("Решетка 10");
+                            ElementId supplyterminal = new ElementId(257206);
+                            ElementId exhaustterminal = new ElementId(257205);
+                            ElementId localexterminal = new ElementId(257207);
+                            if (s1.StartsWith("П"))
+                            {
+                                at1.Set(supplyterminal);
+                            }
+                            else if (s1.StartsWith("В"))
+                            {
+                                at1.Set(exhaustterminal);
+                            }
+                            else if (s1.StartsWith("М"))
+                            {
+                                at1.Set(localexterminal);
                             }
 
+
+                            if (s2.StartsWith("П"))
+                            {
+                                at2.Set(supplyterminal);
+                            }
+                            else if (s2.StartsWith("В"))
+                            {
+                                at2.Set(exhaustterminal);
+                            }
+                            else if (s2.StartsWith("М"))
+                            {
+                                at2.Set(localexterminal);
+                            }
+
+
+                            if (s3.StartsWith("П"))
+                            {
+                                at3.Set(supplyterminal);
+                            }
+                            else if (s3.StartsWith("В"))
+                            {
+                                at3.Set(exhaustterminal);
+                            }
+                            else if (s3.StartsWith("М"))
+                            {
+                                at3.Set(localexterminal);
+                            }
+
+
+                            if (s4.StartsWith("П"))
+                            {
+                                at4.Set(supplyterminal);
+                            }
+                            else if (s4.StartsWith("В"))
+                            {
+                                at4.Set(exhaustterminal);
+                            }
+                            else if (s4.StartsWith("М"))
+                            {
+                                at4.Set(localexterminal);
+                            }
+
+
+                            if (s5.StartsWith("П"))
+                            {
+                                at5.Set(supplyterminal);
+                            }
+                            else if (s5.StartsWith("В"))
+                            {
+                                at5.Set(exhaustterminal);
+                            }
+                            else if (s5.StartsWith("М"))
+                            {
+                                at5.Set(localexterminal);
+                            }
+
+
+
+                            if (s6.StartsWith("П"))
+                            {
+                                at6.Set(supplyterminal);
+                            }
+                            else if (s6.StartsWith("В"))
+                            {
+                                at6.Set(exhaustterminal);
+                            }
+                            else if (s6.StartsWith("М"))
+                            {
+                                at6.Set(localexterminal);
+                            }
+
+
+                            if (s7.StartsWith("П"))
+                            {
+                                at7.Set(supplyterminal);
+                            }
+                            else if (s7.StartsWith("В"))
+                            {
+                                at7.Set(exhaustterminal);
+                            }
+                            else if (s7.StartsWith("М"))
+                            {
+                                at7.Set(localexterminal);
+                            }
+
+
+                            if (s8.StartsWith("П"))
+                            {
+                                at8.Set(supplyterminal);
+                            }
+                            else if (s8.StartsWith("В"))
+                            {
+                                at8.Set(exhaustterminal);
+                            }
+                            else if (s8.StartsWith("М"))
+                            {
+                                at8.Set(localexterminal);
+                            }
+
+
+                            if (s9.StartsWith("П"))
+                            {
+                                at9.Set(supplyterminal);
+                            }
+                            else if (s9.StartsWith("В"))
+                            {
+                                at9.Set(exhaustterminal);
+                            }
+                            else if (s9.StartsWith("М"))
+                            {
+                                at9.Set(localexterminal);
+                            }
+
+
+                            if (s10.StartsWith("П"))
+                            {
+                                at10.Set(supplyterminal);
+                            }
+                            else if (s10.StartsWith("В"))
+                            {
+                                at10.Set(exhaustterminal);
+                            }
+                            else if (s10.StartsWith("М"))
+                            {
+                                at10.Set(localexterminal);
+                            }
+
+
+                            t.Commit();
+
+
                         }
+
+                        catch
+                        {
+                            t.RollBack();
+                        }
+
                     }
+                
 
 
 
-                    XX += 1000;
-                }
+
                 
             }
             return Result.Succeeded;
         }
     }
 }
+
            
            
 
 
-            /*foreach (var rooms in groupedrooms)
-            {
-                double X = 0;
-                double Y = 0;
-                double x = 0;
-                double y = 0;
-
-                foreach (var room in rooms)
-                {
-
-                    if (room != null)
-                    {
-                        string floor = room.Floor;
-                        int floorval;
-                        if (floor == "-" || floor == null || floor == "")
-                        { 
-                            continue;
-                        }
-
-                        else
-                        {
-                            List<string, List<Room> floorroom = new List<Room>();
-                            try
-                            {
-
-                                floorval = Convert.ToInt32(floor.Select(dx => dx).Where(dx => char.IsDigit(dx)).First().ToString());
-                                // floorval = int.Parse(floor);
-                                x = X;
-                                y = Y;
-                                y = floorval * 4000 / 304.8 + y;
-                                XYZ Point = new XYZ(x, y, 0);
-                                list.Add(Point);
-
-                            }
-
-                            catch
-                            {
-                                //TaskDialog.Show("Revit pizdec", $"floor{floor}");
-                                
-
-                               
-                                */
-                                 /*  * *using (Transaction t = new Transaction(doc, "CreateScheme"))
-                                {
-                                    t.Start();
-                                    if (!familyType.IsActive)
-                                    {
-                                        familyType.Activate();
-                                    }
-
-                                  
-                                    try
-                                    {
-                                        FamilyInstance fI = doc.Create.NewFamilyInstance(Point, familyType, uiDocument.ActiveView);
-                                        t.Commit();
-                                        
-                                    }
-
-                                    catch
-                                    {
-                                       t.RollBack();
-                                    }*/
-                                   
-
-
-
-                
-          
-    
-/*string roomname = room.RoomName;
-string roomnumber = room.RoomNummer;
-string category = room.Category;
-string floor = room.Floor;
-string sys1 = room.System1;
-string sys2 = room.System2;
-string sys3= room.System3;
-string sys4= room.System4;
-string sys5= room.System5;
-string sys6= room.System6;
-string sys7= room.System7;
-string sys8= room.System8;
-string sys9 = room.System9;
-string sys10 = room.System10;*/
-/*  List<string> syslist = new List<string>() { sys1, sys2, sys3, sys4, sys5, sys6, sys7, sys8, sys9, sys10 };
-  var count = syslist.Select(r => r).Where(r=>r!="-").Count();*/
+           
 
 
 
@@ -436,7 +384,6 @@ string sys10 = room.System10;*/
 
 
 
-// TaskDialog.Show("ReadCsv",groupedrooms.ToString());
 
 
 

@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GroupedRooms.cs" />
+    <Compile Include="PreRoom.cs" />
     <Compile Include="Room.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
